@@ -5,6 +5,10 @@ navbar:
   left:
     - text: "Home"
       href: index.html
+    - text: "Courses"
+      menu:
+      - text: "Math 485"
+        href: math485.html
   right:
     - text: "Github"
       icon: fa-github
