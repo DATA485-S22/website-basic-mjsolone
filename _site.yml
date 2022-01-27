@@ -1,7 +1,7 @@
-name: "my-website"
+name: "MSinData"
 output_dir: "."
 navbar:
-  title: "My Website"
+  title: "Matthew Solone's website"
   left:
     - text: "Home"
       href: index.html
