@@ -9,3 +9,5 @@ navbar:
     - text: "Github"
       icon: fa-github
       href: https://github.com/
+    - text: "Linkedin"
+      href: https://www.linkedin.com/in/matthewsolone/
