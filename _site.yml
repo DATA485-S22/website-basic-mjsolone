@@ -1,7 +1,7 @@
 name: "MSinData"
 output_dir: "."
 navbar:
-  title: "Matthew Solone's website"
+  title: "Matthew Solone"
   left:
     - text: "Home"
       href: index.html
@@ -9,9 +9,13 @@ navbar:
       menu:
       - text: "Math 485"
         href: math485.html
+    - text: "Blog Posts"
+      menu:
+      - text: "Blog #1"
+        href: blog1.html
   right:
     - text: "Github"
       icon: fa-github
-      href: https://github.com/
+      href: https://github.com/mjsolone
     - text: "Linkedin"
       href: https://www.linkedin.com/in/matthewsolone/
