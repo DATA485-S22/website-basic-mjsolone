@@ -12,4 +12,4 @@ I was originally introduced to Neo4j by my Dad who at the time said "This is the
 Link to their website: https://neo4j.com/
 
 ### Neo4j Bloom
-![ ](/Users/mattsolone/Documents/School/Spring 2022/MATH 485/neo4jBloom.png)
+![ ]("/Users/mattsolone/Documents/School/Spring 2022/MATH 485/website-basic-mjsolone/neo4jBloom.png")
