@@ -5,7 +5,7 @@ title: "Matt Solone"
 ## About me
 
 ```{r, echo=FALSE, out.width="25%", fig.cap=""}
-knitr::include_graphics("/Users/mattsolone/Documents/School/Spring 2022/MATH 485/website-basic-mjsolone/img/image.png")
+knitr::include_graphics("/img/img.png")
 ```
 
 Hello all, my name is Matthew Solone. I am currently a second semester Junior at California State University, Chico. Currently pursing a degree in Computational Mathematics and Statistics and a certificate in Data Science. Ultimately I want to pursue a career as a Data Scientist and I am on my way. For summer 2022 I will be joining Avanade as a Data Engineering intern which I am super excited to learn the real world applications of my studies. In my free time you can find me in the gym or out on the links playing golf with my friends. I love to be outside and enjoy the wilderness so recently I have taken up hiking and trail running. To find more technical interests check out the blog tab!
