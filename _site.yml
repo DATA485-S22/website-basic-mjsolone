@@ -11,8 +11,10 @@ navbar:
         href: math485.html
     - text: "Blog Posts"
       menu:
+      
       - text: "Blog #1"
         href: blog1.html
+        
       - text: "Linear Regression: Tidymodels"
         href: tidymod.html
   right:
