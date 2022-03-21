@@ -13,7 +13,7 @@ navbar:
       menu:
       - text: "Blog #1"
         href: blog1.html
-      - text: "Linear Regression, Tidymodels"
+      - text: "Tidymodel regression"
         href: tidymod.html
   right:
     - text: "Github"
