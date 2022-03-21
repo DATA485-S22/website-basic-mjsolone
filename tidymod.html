@@ -12,7 +12,7 @@
 <meta name="author" content="Matthew Solone" />
 
 
-<title>Neo4j Graph Database</title>
+<title>Linear Regression using Tidymodels</title>
 
 <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -269,6 +269,9 @@ $(document).ready(function () {
     <li>
       <a href="blog1.html">Blog #1</a>
     </li>
+    <li>
+      <a href="tidymod.html">Linear Regression: Tidymodels</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -292,20 +295,113 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Neo4j Graph Database</h1>
+<h1 class="title toc-ignore">Linear Regression using Tidymodels</h1>
 <h4 class="author">Matthew Solone</h4>
-<h4 class="date">2/9/2022</h4>
+<h4 class="date">3/21/2022</h4>
 
 </div>
 
 
-<div id="neo4j-future-of-data-science-databases" class="section level2">
-<h2>Neo4j future of data science databases?</h2>
-<p>I was originally introduced to Neo4j by my Dad who at the time said “This is the new technology that will take over your field.” I ignored him at the time but the more I look into what they are doing the more I am intrigued. What really caught my eye on their approach is that the Database not only leverages the data but also the relationships the data hold with one another. From what I have been reading on their site, Neo4j has a large variety of products to help businesses succeed. From basic data visualization through their “Bloom” application (see below) to more Data Science driven technology for developing machine learning techniques and graph analytics. Overall, I don’t know if it will replace the solid base of technical applications we have now but I think it will definitely be a huge supplement for the future of Data Science.</p>
-<p>Link to their website: <a href="https://neo4j.com/" class="uri">https://neo4j.com/</a></p>
-<div id="neo4j-bloom" class="section level3">
-<h3>Neo4j Bloom</h3>
-<p><img src="/img/neo4jBloom.png" /></p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In this blog post I will be giving a tutorial on how to use the R package <code>tidymodels</code> to fit a regression model in the Tidy model framework. We will be using fish market data from Kaggle which can be found here: <a href="https://www.kaggle.com/datasets/aungpyaeap/fish-market" class="uri">https://www.kaggle.com/datasets/aungpyaeap/fish-market</a>. Though in this tutorial will be using a multiple linear regression, it should be noted that the same steps can be used for a simple linear regression.</p>
+<div id="step-1-install-load-packages-and-data." class="section level2">
+<h2>Step 1: Install / Load packages and Data.</h2>
+<p>First thing you should do is make sure that you have installed the proper packages for the Tiny Model framework. you can do this by using the <code>install.packages()</code> function. We will be using multiple packages additionally to the Tidy Models package. In the code chunk below you can see how to load packages and read in the data into R. (Make sure to change the data to YOUR working directory)</p>
+<pre class="r"><code>library(tidymodels) </code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;tune&#39;:
+##   method                   from   
+##   required_pkgs.model_spec parsnip</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────────────── tidymodels 0.1.4 ──</code></pre>
+<pre><code>## ✓ broom        0.7.12     ✓ recipes      0.1.17
+## ✓ dials        0.1.0      ✓ rsample      0.1.1 
+## ✓ dplyr        1.0.8      ✓ tibble       3.1.6 
+## ✓ ggplot2      3.3.5      ✓ tidyr        1.2.0 
+## ✓ infer        1.0.0      ✓ tune         0.1.6 
+## ✓ modeldata    0.1.1      ✓ workflows    0.2.4 
+## ✓ parsnip      0.1.7      ✓ workflowsets 0.1.0 
+## ✓ purrr        0.3.4      ✓ yardstick    0.0.9</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+## x purrr::discard() masks scales::discard()
+## x dplyr::filter()  masks stats::filter()
+## x dplyr::lag()     masks stats::lag()
+## x recipes::step()  masks stats::step()
+## • Dig deeper into tidy modeling with R at https://www.tmwr.org</code></pre>
+<pre class="r"><code># Helper packages
+library(readr)  </code></pre>
+<pre><code>## 
+## Attaching package: &#39;readr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:yardstick&#39;:
+## 
+##     spec</code></pre>
+<pre><code>## The following object is masked from &#39;package:scales&#39;:
+## 
+##     col_factor</code></pre>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+
+# Loading in our data, make sure you use the correct working directory
+fishM &lt;- 
+  read_csv(&quot;/Users/mattsolone/Documents/School/Spring 2022/MATH 485/website-basic-mjsolone/Fish2.csv&quot;) %&gt;% 
+  mutate(AvgLength = (Length1+Length2+Length3)/3) # Creating a single column for the average length of the fish</code></pre>
+<pre><code>## Rows: 159 Columns: 7</code></pre>
+<pre><code>## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (1): Species
+## dbl (6): Weight, Length1, Length2, Length3, Height, Width
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<div id="step-2-exploratory-analysis" class="section level1">
+<h1>Step 2: Exploratory Analysis</h1>
+<p>The Fish Market data set is a small data set with only 159 observations over 7(now 8) variables. We will be looking at the relationship between the Weight of the fish and the length, height, and width.</p>
+<p>It is always good habit to do some exploratory analysis of the data to visually see if there is any linear relation prior to building your model.</p>
+<pre class="r"><code>ggplot(fishM,
+       aes(x = AvgLength, 
+           y = Weight)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = FALSE) +
+  scale_color_viridis_d(option = &quot;plasma&quot;, end = .7)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="tidymod_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(fishM,
+       aes(x = Width, 
+           y = Weight)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = FALSE) +
+  scale_color_viridis_d(option = &quot;plasma&quot;, end = .7)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="tidymod_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+<pre class="r"><code>ggplot(fishM,
+       aes(x = Height, 
+           y = Weight)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = FALSE) +
+  scale_color_viridis_d(option = &quot;plasma&quot;, end = .7)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="tidymod_files/figure-html/unnamed-chunk-2-3.png" width="672" /></p>
+<p>We can see from this scatterplots, for each explanatory variable there seems to be a linear relationship.</p>
+<div id="step-3-build-and-fit-a-model" class="section level2">
+<h2>Step 3: Build and Fit a Model</h2>
+<p>Since our model is relatively straight forward we will use the formula where y is the response variable and <span class="math inline">\(x_i\)</span> are the response variables. <code>y ~ x1 + x2 + x3</code> or for our dataset <code>Weight ~ AvgLength + Height + Width</code></p>
+<p>For our model, an ordinary least squares should be a good approach. We will do this by declaring that we will be using linear regression with <code>linear_reg()</code> and then setting the “engine”(method for fitting or training) with <code>set_engine("lm")</code> then saving this to an object.</p>
+<pre class="r"><code>lm_mod &lt;- 
+  linear_reg() %&gt;% 
+  set_engine(&quot;lm&quot;)</code></pre>
+<p>Finally we can apply this model by piping our Linear regression object to the <code>fit()</code> with the same specification as stated at the beginning of this section. We then can use the <code>tidy()</code> to format our results in a nice format.</p>
+<pre class="r"><code>lm_fit &lt;- 
+  lm_mod %&gt;% 
+  fit(Weight ~ AvgLength + Height + Width, data = fishM)
+tidy(lm_fit)</code></pre>
+<pre><code>## # A tibble: 4 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)  -518.       28.9     -17.9  1.13e-39
+## 2 AvgLength      21.2       1.92     11.0  2.91e-21
+## 3 Height          9.70      3.83      2.54 1.22e- 2
+## 4 Width          50.6      15.1       3.35 1.01e- 3</code></pre>
 </div>
 </div>
 
