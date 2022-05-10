@@ -1,0 +1,45 @@
+---
+title: "PGA Data Analysis"
+author: "Matthew Solone"
+date: "5/7/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+pga_raw <- read.csv("PGARAW.csv")
+
+pga_c <- pga_raw[, -c(4:24)]
+
+```
+
+Data Science in Golf has become one of the most important tools for not only analysts for broadcasting systems but also for companies and players. The players and golf companies use data to develop new strategies for themselves to improve their game.
+
+In this post I will go over some simple analytics used to evaluating and predicting performance of the top players in the PGA. I have obtained the raw data from this website; (https://www.advancedsportsanalytics.com/pga-user-guides/#pga-optimizer-app)
+
+The data is from Shotlink data which is the primary data collection application used by the PGA (https://www.pgatour.com/stats/academicdata/shotlink.html) . Shot link uses 'Strokes Gained(SG) statistics which are calculated using mathematical equations that incorporate player performance with the ShotLink® data collected by volunteers at each PGA TOUR tournament. SG is a better measure of performance compared to older gold statistics because it can isolate a players performance and compare to other players in the field. As an example on how SG is calculated, the PGA says this about SG: Putting - 
+The statistic is computed by:
+
+Ex: Average number of putts to hole out from 7 feet, 10 inches is 1.5.
+If a player one-putts from that distance, he gains 0.5 strokes.
+If he two-putts, he loses 0.5 strokes.
+If he three-putts, he loses 1.5 strokes.
+
+There are more SG stats as well: 
+
+"The new strokes gained statistics, which were introduced June 1, 2016, break down tee-to-green play into three categories: off-the-tee, approach-the-green and around-the-green. The sum of those three statistics equals strokes gained is tee-to-green.
+
+Off-the-tee + approach-the-green + around-the-green + putting = strokes gained: total
+
+Strokes Gained: Off-the-Tee measures player performance off the tee on all par-4s and par-5s.
+
+Strokes Gained: Approach-the-Green measures player performance on approach shots. Approach shots include all shots that are not from the tee on par-4 and par-5 holes and are not included in strokes gained: around-the-green and strokes gained: putting. Approach shots include tee shots on par-3s.
+
+Strokes Gained: Around-the-Green measures player performance on any shot within 30 yards of the edge of the green. This statistic does not include any shots taken on the putting green"
+
+From these statistics I believe we can accurately predict a players performance, 'finish`, based on the SG statistics. To do this we will fit a regression model to the data and try and find correlation between the variables.
+
+
