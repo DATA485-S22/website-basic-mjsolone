@@ -13,8 +13,10 @@ navbar:
       menu:
       - text: "Blog #1"
         href: blog1.html
+        
       - text: "Tidymodel regression"
         href: tidymod.html
+        
       - text: "Data Science use in PGA Analysis"
         href: pgapost.html
   right:
