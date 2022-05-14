@@ -40,6 +40,38 @@ Strokes Gained: Approach-the-Green measures player performance on approach shots
 
 Strokes Gained: Around-the-Green measures player performance on any shot within 30 yards of the edge of the green. This statistic does not include any shots taken on the putting green"
 
-From these statistics I believe we can accurately predict a players performance, 'finish`, based on the SG statistics. To do this we will fit a regression model to the data and try and find correlation between the variables.
+From these statistics I believe we can accurately predict a players ability to make the cut, 'made_cut`(1 being made the cut and 0 being did not make the cut), based on the SG statistics. To do this we will fit a logistic regression model to the data and try and find correlation between the variables.
+
+* First lets look at some simple plots of our data and tidy it up a bit. Also remember to load in the librarys we will be using.
+```{r, eval=FALSE}
+library(tidymodels) 
+library(readr)
+library(broom.mixed)
+library(ISLR2)
+library(discrim)
+library(corrplot)
+library(stargazer)
+library(discrim)
+library(caret)
+```
 
 
+* Fitting our model 
+```{r}
+pga_raw$made_cut <- factor(pga_raw$made_cut)
+
+pga_fit <- logistic_reg() %>% set_engine("glm") %>% set_mode("classification") %>% fit(made_cut ~ sg_putt + sg_arg + sg_app + sg_ott + sg_t2g , data = pga_raw)
+
+tidy(pga_fit)
+```
+* From our initial logistic fit we can see that all of the strokes gained statistics are statistically significant. 
+
+* From here we can predict the outcome and visualize using a confusion matrix.
+
+```{r}
+pred_log <- predict(pga_fit, pga_raw)
+
+confusionMatrix(pga_raw$made_cut,pred_log$.pred_class)
+```
+
+* The confusion matrix shows a a true positive rate of 0.7822 and a true negative rate of 0.7834 which is not too bad but ideally we would be in the 90% range. So in total we are correct about 78.29% of the time. We correctly predicted making the cut about 83.55% of the time in and correctly predicted not making the cut 71.88 % of the time. 
