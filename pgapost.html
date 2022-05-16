@@ -315,7 +315,80 @@ $(document).ready(function () {
 <p>Strokes Gained: Off-the-Tee measures player performance off the tee on all par-4s and par-5s.</p>
 <p>Strokes Gained: Approach-the-Green measures player performance on approach shots. Approach shots include all shots that are not from the tee on par-4 and par-5 holes and are not included in strokes gained: around-the-green and strokes gained: putting. Approach shots include tee shots on par-3s.</p>
 <p>Strokes Gained: Around-the-Green measures player performance on any shot within 30 yards of the edge of the green. This statistic does not include any shots taken on the putting green”</p>
-<p>From these statistics I believe we can accurately predict a players performance, ’finish`, based on the SG statistics.</p>
+<p>From these statistics I believe we can accurately predict a players ability to make the cut, ’made_cut`(1 being made the cut and 0 being did not make the cut), based on the SG statistics. To do this we will fit a logistic regression model to the data and try and find correlation between the variables.</p>
+<ul>
+<li>First lets look at some simple plots of our data and tidy it up a bit. Also remember to load in the librarys we will be using.</li>
+</ul>
+<pre class="r"><code>library(tidymodels) 
+library(tidyverse)
+library(tidyr)
+library(readr)
+library(broom.mixed)
+library(ISLR2)
+library(discrim)
+library(corrplot)
+library(stargazer)
+library(discrim)</code></pre>
+<ul>
+<li>Fitting our model</li>
+</ul>
+<pre class="r"><code>library(parsnip)
+pga_raw$made_cut &lt;- factor(pga_raw$made_cut)
+
+pga_fit &lt;- logistic_reg() %&gt;% set_engine(&quot;glm&quot;) %&gt;% set_mode(&quot;classification&quot;) %&gt;% fit(made_cut ~ sg_putt + sg_app + sg_ott , data = pga_raw)
+
+tidy(pga_fit)</code></pre>
+<pre><code>## # A tibble: 4 × 5
+##   term        estimate std.error statistic   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)    0.487    0.0366      13.3 2.74e- 40
+## 2 sg_putt        1.02     0.0398      25.6 3.59e-144
+## 3 sg_app         0.977    0.0400      24.4 6.58e-132
+## 4 sg_ott         0.874    0.0520      16.8 2.57e- 63</code></pre>
+<ul>
+<li><p>From our initial logistic fit we can see that using the three main strokes gained statistics are all statistically significant and can be used in predictions.</p></li>
+<li><p>From here we can predict the outcome and visualize using a confusion matrix.</p></li>
+</ul>
+<pre class="r"><code>library(caret)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## 
+## Attaching package: &#39;caret&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     lift</code></pre>
+<pre class="r"><code>pred_log &lt;- predict(pga_fit, pga_raw)
+
+confusionMatrix(pga_raw$made_cut,pred_log$.pred_class)</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0 1479  669
+##          1  458 2156
+##                                          
+##                Accuracy : 0.7633         
+##                  95% CI : (0.751, 0.7753)
+##     No Information Rate : 0.5932         
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
+##                                          
+##                   Kappa : 0.5179         
+##                                          
+##  Mcnemar&#39;s Test P-Value : 3.964e-10      
+##                                          
+##             Sensitivity : 0.7636         
+##             Specificity : 0.7632         
+##          Pos Pred Value : 0.6885         
+##          Neg Pred Value : 0.8248         
+##              Prevalence : 0.4068         
+##          Detection Rate : 0.3106         
+##    Detection Prevalence : 0.4511         
+##       Balanced Accuracy : 0.7634         
+##                                          
+##        &#39;Positive&#39; Class : 0              
+## </code></pre>
+<ul>
+<li>The confusion matrix shows a a true positive rate of 0.7636 and a true negative rate of 0.7632 which is not too bad but ideally we would be in the 90% range. So in total we are correct about 76.33% of the time. We correctly predicted making the cut about 82.48% of the time in and correctly predicted not making the cut 68.85 % of the time.</li>
+</ul>
 
 
 
