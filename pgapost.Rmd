@@ -78,3 +78,14 @@ confusionMatrix(pga_raw$made_cut,pred_log$.pred_class)
 ```
 
 * The confusion matrix shows a a true positive rate of 0.7636 and a true negative rate of 0.7632 which is not too bad but ideally we would be in the 90% range. So in total we are correct about 76.33% of the time. We correctly predicted making the cut about 82.48% of the time in and correctly predicted not making the cut 68.85 % of the time. 
+
+
+Bio - 
+
+My name is Matthew Solonem, I am currently an incming Senior at California State University, Chico. Currently pursing a degree in Computational Mathematics and Statistics and a certificate in Data Science. My goal is to use data science to provide meaningful analysis to help drive better buisiness decisions.
+
+LinkedIn - https://www.linkedin.com/in/matthewsolone/
+
+GitHub - https://github.com/mjsolone
+
+Email - mattsolone18@gmail.com
