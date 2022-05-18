@@ -1,0 +1,83 @@
+---
+title: "Linear Regression using Tidymodels"
+author: "Matthew Solone"
+date: "3/21/2022"
+output: html_document
+---
+
+# Introduction
+
+In this blog post I will be giving a tutorial on how to use the R package `tidymodels` to fit a regression model in the Tidy model framework. We will be using fish market data from Kaggle which can be found here: https://www.kaggle.com/datasets/aungpyaeap/fish-market. Though in this tutorial will be using a multiple linear regression, it should be noted that the same steps can be used for a simple linear regression. 
+
+## Step 1: Install / Load packages and Data.
+
+First thing you should do is make sure that you have installed the proper packages for the Tiny Model framework. you can do this by using the `install.packages()` function. We will be using multiple packages additionally to the Tidy Models package. In the code chunk below you can see how to load packages and read in the data into R. (Make sure to change the data to YOUR working directory)
+
+```{r}
+library(tidymodels) 
+
+# Helper packages
+library(readr)  
+library(dplyr)
+library(ggplot2)
+
+# Loading in our data, make sure you use the correct working directory
+fishM <- 
+  read_csv("/Users/mattsolone/Documents/School/Spring 2022/MATH 485/website-basic-mjsolone/Fish2.csv") %>% 
+  mutate(AvgLength = (Length1+Length2+Length3)/3) # Creating a single column for the average length of the fish
+```
+
+# Step 2: Exploratory Analysis
+
+The Fish Market data set is a small data set with only 159 observations over 7(now 8) variables. We will be looking at the relationship between the Weight of the fish and the length, height, and width.
+
+It is always good habit to do some exploratory analysis of the data to visually see if there is any linear relation prior to building your model.
+
+```{r}
+ggplot(fishM,
+       aes(x = AvgLength, 
+           y = Weight)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = FALSE) +
+  scale_color_viridis_d(option = "plasma", end = .7)
+
+ggplot(fishM,
+       aes(x = Width, 
+           y = Weight)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = FALSE) +
+  scale_color_viridis_d(option = "plasma", end = .7)
+
+ggplot(fishM,
+       aes(x = Height, 
+           y = Weight)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = FALSE) +
+  scale_color_viridis_d(option = "plasma", end = .7)
+```
+
+We can see from this scatterplots, for each explanatory variable there seems to be a linear relationship.
+
+## Step 3: Build and Fit a Model
+
+Since our model is relatively straight forward we will use the formula where y is the response variable and $x_i$ are the response variables.
+` y ~ x1 + x2 + x3 ` or for our dataset `Weight ~ AvgLength + Height + Width`
+
+For our model, an ordinary least squares should be a good approach. We will do this by declaring that we will be using linear regression with `linear_reg()` and then setting the "engine"(method for fitting or training) with `set_engine("lm")` then saving this to an object.
+
+```{r}
+lm_mod <- 
+  linear_reg() %>% 
+  set_engine("lm")
+```
+
+Finally we can apply this model by piping our Linear regression object to the `fit()` with the same specification as stated at the beginning of this section. We then can use the `tidy()` to format our results in a nice format.
+
+```{r}
+lm_fit <- 
+  lm_mod %>% 
+  fit(Weight ~ AvgLength + Height + Width, data = fishM)
+tidy(lm_fit)
+```
+
+And there you go ! You have now successfully fit a regression model in the Tidy models framework.

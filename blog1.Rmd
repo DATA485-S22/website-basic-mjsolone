@@ -1,0 +1,16 @@
+---
+title: "Neo4j"
+author: "Matthew Solone"
+date: "2/9/2022"
+output: html_document
+---
+# Blog 1
+
+## Neo4j future of data science databases?
+
+I was originally introduced to Neo4j by my Dad who at the time said "This is the new technology that will take over your field." I ignored him at the time but the more I look into what they are doing the more I am intrigued. What really caught my eye on their approach is that the Database not only leverages the data but also the relationships the data hold with one another. From what I have been reading on their site, Neo4j has a large variety of products to help businesses succeed. From basic data visualization through their "Bloom" application (see below) to more Data Science driven technology for developing machine learning techniques and graph analytics. Overall, I don't know if it will replace the solid base of technical applications we have now but I think it will definitely be a huge supplement for the future of Data Science.
+
+Link to their website: https://neo4j.com/
+
+### Neo4j Bloom
+![](/img/neo4jBloom.png)

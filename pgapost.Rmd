@@ -1,0 +1,96 @@
+---
+title: "PGA Data Analysis"
+author: "Matthew Solone"
+date: "5/7/2022"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+pga_raw <- read.csv("PGARAW.csv")
+
+pga_c <- pga_raw[, -c(4:24)]
+
+```
+
+### Problem Statement
+
+Data Science in Golf has become one of the most important tools for not only analysts for broadcasting systems but also for companies and players. The players and golf companies use data to develop new strategies for themselves to improve their game. In this blog I to see if we can accurately predict a players ability to make the cut, 'made_cut\`(1 being made the cut and 0 being did not make the cut), based on the SG statistics. To do this we will fit a logistic regression model to the data and try and find correlation between the variables.
+
+### Data Gathering
+
+In this post I will go over some simple analytics used to evaluating and predicting performance of the top players in the PGA. I have obtained the raw data from this website; (<https://www.advancedsportsanalytics.com/pga-user-guides/#pga-optimizer-app>)
+
+The data is from Shotlink data which is the primary data collection application used by the PGA (<https://www.pgatour.com/stats/academicdata/shotlink.html>) . Shot link uses 'Strokes Gained(SG) statistics which are calculated using mathematical equations that incorporate player performance with the ShotLink® data collected by volunteers at each PGA TOUR tournament. SG is a better measure of performance compared to older gold statistics because it can isolate a players performance and compare to other players in the field. As an example on how SG is calculated, the PGA says this about SG: Putting - The statistic is computed by:
+
+Ex: Average number of putts to hole out from 7 feet, 10 inches is 1.5. If a player one-putts from that distance, he gains 0.5 strokes. If he two-putts, he loses 0.5 strokes. If he three-putts, he loses 1.5 strokes.
+
+There are more SG stats as well:
+
+The new strokes gained statistics, which were introduced June 1, 2016, break down tee-to-green play into three categories: off-the-tee, approach-the-green and around-the-green. The sum of those three statistics equals strokes gained is tee-to-green.
+
+-   Off-the-tee + approach-the-green + around-the-green + putting = strokes gained: total
+
+-   Strokes Gained: Off-the-Tee measures player performance off the tee on all par-4s and par-5s.
+
+-   Strokes Gained: Approach-the-Green measures player performance on approach shots. Approach shots include all shots that are not from the tee on par-4 and par-5 holes and are not included in strokes gained: around-the-green and strokes gained: putting. Approach shots include tee shots on par-3s.
+
+-   Strokes Gained: Around-the-Green measures player performance on any shot within 30 yards of the edge of the green. This statistic does not include any shots taken on the putting green"
+
+-   First lets look at some simple plots of our data and tidy it up a bit. Also remember to load in the library's we will be using.
+
+```{r, eval=FALSE}
+library(tidymodels) 
+library(tidyverse)
+library(tidyr)
+library(readr)
+library(broom.mixed)
+library(ISLR2)
+library(discrim)
+library(corrplot)
+library(stargazer)
+library(discrim)
+```
+
+### Data Cleaning and Data Modeling
+
+-   Fitting our model
+
+```{r}
+library(parsnip)
+pga_raw$made_cut <- factor(pga_raw$made_cut)
+
+pga_fit <- logistic_reg() %>% set_engine("glm") %>% set_mode("classification") %>% fit(made_cut ~ sg_putt + sg_app + sg_ott , data = pga_raw)
+
+tidy(pga_fit)
+```
+
+-   From our initial logistic fit we can see that using the three main strokes gained statistics are all statistically significant and can be used in predictions.
+
+-   From here we can predict the outcome and visualize using a confusion matrix.
+
+```{r}
+library(caret)
+pred_log <- predict(pga_fit, pga_raw)
+
+confusionMatrix(pga_raw$made_cut,pred_log$.pred_class)
+```
+
+### Conclusion
+
+-   The confusion matrix shows a a true positive rate of 0.7636 and a true negative rate of 0.7632 which is not too bad but ideally we would be in the 90% range. So in total we are correct about 76.33% of the time. We correctly predicted making the cut about 82.48% of the time in and correctly predicted not making the cut 68.85 % of the time.
+
+### About the author -
+
+My name is Matthew Solone, I am currently an incoming Senior at California State University, Chico. Currently pursing a degree in Computational Mathematics and Statistics and a certificate in Data Science. My goal is to use data science to provide meaningful analysis to help drive better business decisions.
+
+LinkedIn - <https://www.linkedin.com/in/matthewsolone/>
+
+GitHub - <https://github.com/mjsolone>
+
+Email - [mattsolone18\@gmail.com](mailto:mattsolone18@gmail.com){.email}

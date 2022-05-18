@@ -1,11 +1,27 @@
-name: "my-website"
+name: "MSinData"
 output_dir: "."
 navbar:
-  title: "My Website"
+  title: "Matthew Solone"
   left:
     - text: "Home"
       href: index.html
+    - text: "Courses"
+      menu:
+      - text: "Math 485"
+        href: math485.html
+    - text: "Blog Posts"
+      menu:
+      - text: "Blog #1"
+        href: blog1.html
+        
+      - text: "Tidymodel regression"
+        href: tidymod.html
+        
+      - text: "Data Science use in PGA Analysis"
+        href: pgapost.html
   right:
     - text: "Github"
       icon: fa-github
-      href: https://github.com/
+      href: https://github.com/mjsolone
+    - text: "Linkedin"
+      href: https://www.linkedin.com/in/matthewsolone/

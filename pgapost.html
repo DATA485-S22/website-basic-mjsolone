@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Matthew Solone" />
+
+
+<title>PGA Data Analysis</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Matthew Solone</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Courses
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="math485.html">Math 485</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Blog Posts
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="blog1.html">Blog #1</a>
+    </li>
+    <li>
+      <a href="tidymod.html">Tidymodel regression</a>
+    </li>
+    <li>
+      <a href="pgapost.html">Data Science use in PGA Analysis</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/mjsolone">
+    <span class="fa fa-github"></span>
+     
+    Github
+  </a>
+</li>
+<li>
+  <a href="https://www.linkedin.com/in/matthewsolone/">Linkedin</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">PGA Data Analysis</h1>
+<h4 class="author">Matthew Solone</h4>
+<h4 class="date">5/7/2022</h4>
+
+</div>
+
+
+<div id="problem-statement" class="section level3">
+<h3>Problem Statement</h3>
+<p>Data Science in Golf has become one of the most important tools for not only analysts for broadcasting systems but also for companies and players. The players and golf companies use data to develop new strategies for themselves to improve their game. In this blog I to see if we can accurately predict a players ability to make the cut, ’made_cut`(1 being made the cut and 0 being did not make the cut), based on the SG statistics. To do this we will fit a logistic regression model to the data and try and find correlation between the variables.</p>
+</div>
+<div id="data-gathering" class="section level3">
+<h3>Data Gathering</h3>
+<p>In this post I will go over some simple analytics used to evaluating and predicting performance of the top players in the PGA. I have obtained the raw data from this website; (<a href="https://www.advancedsportsanalytics.com/pga-user-guides/#pga-optimizer-app" class="uri">https://www.advancedsportsanalytics.com/pga-user-guides/#pga-optimizer-app</a>)</p>
+<p>The data is from Shotlink data which is the primary data collection application used by the PGA (<a href="https://www.pgatour.com/stats/academicdata/shotlink.html" class="uri">https://www.pgatour.com/stats/academicdata/shotlink.html</a>) . Shot link uses ’Strokes Gained(SG) statistics which are calculated using mathematical equations that incorporate player performance with the ShotLink® data collected by volunteers at each PGA TOUR tournament. SG is a better measure of performance compared to older gold statistics because it can isolate a players performance and compare to other players in the field. As an example on how SG is calculated, the PGA says this about SG: Putting - The statistic is computed by:</p>
+<p>Ex: Average number of putts to hole out from 7 feet, 10 inches is 1.5. If a player one-putts from that distance, he gains 0.5 strokes. If he two-putts, he loses 0.5 strokes. If he three-putts, he loses 1.5 strokes.</p>
+<p>There are more SG stats as well:</p>
+<p>The new strokes gained statistics, which were introduced June 1, 2016, break down tee-to-green play into three categories: off-the-tee, approach-the-green and around-the-green. The sum of those three statistics equals strokes gained is tee-to-green.</p>
+<ul>
+<li><p>Off-the-tee + approach-the-green + around-the-green + putting = strokes gained: total</p></li>
+<li><p>Strokes Gained: Off-the-Tee measures player performance off the tee on all par-4s and par-5s.</p></li>
+<li><p>Strokes Gained: Approach-the-Green measures player performance on approach shots. Approach shots include all shots that are not from the tee on par-4 and par-5 holes and are not included in strokes gained: around-the-green and strokes gained: putting. Approach shots include tee shots on par-3s.</p></li>
+<li><p>Strokes Gained: Around-the-Green measures player performance on any shot within 30 yards of the edge of the green. This statistic does not include any shots taken on the putting green”</p></li>
+<li><p>First lets look at some simple plots of our data and tidy it up a bit. Also remember to load in the library’s we will be using.</p></li>
+</ul>
+<pre class="r"><code>library(tidymodels) 
+library(tidyverse)
+library(tidyr)
+library(readr)
+library(broom.mixed)
+library(ISLR2)
+library(discrim)
+library(corrplot)
+library(stargazer)
+library(discrim)</code></pre>
+</div>
+<div id="data-cleaning-and-data-modeling" class="section level3">
+<h3>Data Cleaning and Data Modeling</h3>
+<ul>
+<li>Fitting our model</li>
+</ul>
+<pre class="r"><code>library(parsnip)
+pga_raw$made_cut &lt;- factor(pga_raw$made_cut)
+
+pga_fit &lt;- logistic_reg() %&gt;% set_engine(&quot;glm&quot;) %&gt;% set_mode(&quot;classification&quot;) %&gt;% fit(made_cut ~ sg_putt + sg_app + sg_ott , data = pga_raw)
+
+tidy(pga_fit)</code></pre>
+<pre><code>## # A tibble: 4 × 5
+##   term        estimate std.error statistic   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)    0.487    0.0366      13.3 2.74e- 40
+## 2 sg_putt        1.02     0.0398      25.6 3.59e-144
+## 3 sg_app         0.977    0.0400      24.4 6.58e-132
+## 4 sg_ott         0.874    0.0520      16.8 2.57e- 63</code></pre>
+<ul>
+<li><p>From our initial logistic fit we can see that using the three main strokes gained statistics are all statistically significant and can be used in predictions.</p></li>
+<li><p>From here we can predict the outcome and visualize using a confusion matrix.</p></li>
+</ul>
+<pre class="r"><code>library(caret)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## 
+## Attaching package: &#39;caret&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     lift</code></pre>
+<pre class="r"><code>pred_log &lt;- predict(pga_fit, pga_raw)
+
+confusionMatrix(pga_raw$made_cut,pred_log$.pred_class)</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0 1479  669
+##          1  458 2156
+##                                          
+##                Accuracy : 0.7633         
+##                  95% CI : (0.751, 0.7753)
+##     No Information Rate : 0.5932         
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
+##                                          
+##                   Kappa : 0.5179         
+##                                          
+##  Mcnemar&#39;s Test P-Value : 3.964e-10      
+##                                          
+##             Sensitivity : 0.7636         
+##             Specificity : 0.7632         
+##          Pos Pred Value : 0.6885         
+##          Neg Pred Value : 0.8248         
+##              Prevalence : 0.4068         
+##          Detection Rate : 0.3106         
+##    Detection Prevalence : 0.4511         
+##       Balanced Accuracy : 0.7634         
+##                                          
+##        &#39;Positive&#39; Class : 0              
+## </code></pre>
+</div>
+<div id="conclusion" class="section level3">
+<h3>Conclusion</h3>
+<ul>
+<li>The confusion matrix shows a a true positive rate of 0.7636 and a true negative rate of 0.7632 which is not too bad but ideally we would be in the 90% range. So in total we are correct about 76.33% of the time. We correctly predicted making the cut about 82.48% of the time in and correctly predicted not making the cut 68.85 % of the time.</li>
+</ul>
+</div>
+<div id="about-the-author--" class="section level3">
+<h3>About the author -</h3>
+<p>My name is Matthew Solone, I am currently an incoming Senior at California State University, Chico. Currently pursing a degree in Computational Mathematics and Statistics and a certificate in Data Science. My goal is to use data science to provide meaningful analysis to help drive better business decisions.</p>
+<p>LinkedIn - <a href="https://www.linkedin.com/in/matthewsolone/" class="uri">https://www.linkedin.com/in/matthewsolone/</a></p>
+<p>GitHub - <a href="https://github.com/mjsolone" class="uri">https://github.com/mjsolone</a></p>
+<p>Email - <a href="mailto:mattsolone18@gmail.com" class="email">mattsolone18@gmail.com</a></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
